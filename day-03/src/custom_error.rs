@@ -7,3 +7,13 @@ pub enum AocError {
     #[diagnostic(code(aoc::io_error))]
     IoError(#[from] std::io::Error),
 }
+
+#[derive(Error, Debug)]
+pub enum ParseError {
+    #[error("Error while parsing: {0}")]
+    NomError(nom::Err<nom::error::Error<&'static str>>),
+    #[error("Other error: {0}")]
+    Other(String),
+}
+
+pub type ParseResult<T> = Result<T, ParseError>;
