@@ -16,10 +16,9 @@ impl Card {
             .filter(|n| self.is_winning_number(**n))
             .count();
 
-        if count == 0 {
-            0
-        } else {
-            2_u32.pow(count as u32 - 1)
+        match count {
+            0 => 0,
+            _ => 2_u32.pow(count as u32 - 1),
         }
     }
 
