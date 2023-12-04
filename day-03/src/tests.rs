@@ -1,6 +1,7 @@
+#[allow(clippy::module_inception)]
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::extract_symbols;
     use crate::part1::{collect_adjacents, process};
 
     #[test]
@@ -15,7 +16,7 @@ mod tests {
 ......755.
 ...$.*....
 .664.598..";
-        assert_eq!(8, collect_adjacents(input).len());
+        assert_eq!(8, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -40,7 +41,7 @@ mod tests {
         let input = "1.3
 .*.
 4.5";
-        assert_eq!(4, collect_adjacents(input).len());
+        assert_eq!(4, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -49,7 +50,7 @@ mod tests {
         let input = "1..
 .*.
 ...";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -58,7 +59,7 @@ mod tests {
         let input = "..1
 .*.
 ...";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -67,7 +68,7 @@ mod tests {
         let input = "...
 .*.
 1..";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -76,7 +77,7 @@ mod tests {
         let input = "...
 .*.
 ..1";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -85,7 +86,7 @@ mod tests {
         let input = "...
 1*.
 ...";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -94,7 +95,7 @@ mod tests {
         let input = "...
 .*1
 ...";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -103,7 +104,7 @@ mod tests {
         let input = ".1.
 .*.
 ...";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
         Ok(())
     }
 
@@ -112,7 +113,23 @@ mod tests {
         let input = "...
 .*.
 .1.";
-        assert_eq!(1, collect_adjacents(input).len());
+        assert_eq!(1, collect_adjacents(input, extract_symbols(input)).len());
+        Ok(())
+    }
+
+    #[test]
+    fn part2() -> miette::Result<()> {
+        let input = "467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..";
+        assert_eq!(467835, crate::part2::process(input)?);
         Ok(())
     }
 }
