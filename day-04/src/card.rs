@@ -6,20 +6,23 @@ use std::str::FromStr;
 pub struct Card {
     pub winners: Vec<u32>,
     pub hand: Vec<u32>,
+    pub repetitions: u32,
 }
 
 impl Card {
     pub fn points(&self) -> u32 {
-        let count = self
-            .hand
-            .iter()
-            .filter(|n| self.is_winning_number(**n))
-            .count();
-
+        let count = self.winning_count();
         match count {
             0 => 0,
             _ => 2_u32.pow(count as u32 - 1),
         }
+    }
+
+    pub fn winning_count(&self) -> usize {
+        self.hand
+            .iter()
+            .filter(|n| self.is_winning_number(**n))
+            .count()
     }
 
     fn is_winning_number(&self, number: u32) -> bool {
@@ -48,7 +51,11 @@ impl FromStr for Card {
             .collect();
 
         match (winners_res, hand_res) {
-            (Ok(winners), Ok(hand)) => Ok(Card { winners, hand }),
+            (Ok(winners), Ok(hand)) => Ok(Card {
+                winners,
+                hand,
+                repetitions: 1,
+            }),
             _ => Err(CardError::Number),
         }
     }
