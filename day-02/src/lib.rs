@@ -117,6 +117,40 @@ impl Game {
     fn possible(&self) -> bool {
         self.sets.iter().all(|set| set.possible())
     }
+
+    fn min_cubes(&self) -> Score {
+        let mut min_cubes = Score {
+            red: 0,
+            green: 0,
+            blue: 0,
+        };
+
+        for set in &self.sets {
+            let mut set_score = Score {
+                red: 0,
+                green: 0,
+                blue: 0,
+            };
+
+            for card in &set.draw {
+                match card.color {
+                    Color::Red => {
+                        set_score.red += card.number;
+                        min_cubes.red = set_score.red.max(min_cubes.red);
+                    }
+                    Color::Green => {
+                        set_score.green += card.number;
+                        min_cubes.green = set_score.green.max(min_cubes.green);
+                    }
+                    Color::Blue => {
+                        set_score.blue += card.number;
+                        min_cubes.blue = set_score.blue.max(min_cubes.blue);
+                    }
+                }
+            }
+        }
+        min_cubes
+    }
 }
 
 impl Set {
@@ -138,5 +172,19 @@ impl Set {
         );
 
         red <= MAX_RED && green <= MAX_GREEN && blue <= MAX_BLUE
+    }
+
+    fn is_complete(&self) -> bool {
+        self.draw.len() == 3
+    }
+
+    fn draw_sum(&self, index: usize) -> u32 {
+        self.draw.get(index).map_or(0, |card| card.number)
+    }
+}
+
+impl Score {
+    fn power(&self) -> u32 {
+        self.red * self.green * self.blue
     }
 }
