@@ -1,12 +1,12 @@
 use crate::custom_error::AocError;
-use crate::Game;
+use crate::game::Game;
 
 #[tracing::instrument]
 pub fn process(input: &str) -> miette::Result<u32, AocError> {
     let result = input
         .lines()
         .map(|s| s.parse::<Game>().unwrap())
-        .filter(|game| game.possible())
+        .filter(|game| game.is_possible())
         .map(|game| game.id)
         .sum::<u32>();
 

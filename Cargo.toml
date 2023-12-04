@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["day-*"]
+members = ["day-*", "daily-template"]
 default-members = ["day-*"]
 
 [workspace.dependencies]
@@ -23,6 +23,7 @@ thiserror = "1.0.50"
 dhat = "0.3.2"
 criterion = { version = "0.4", features = ["html_reports"] }
 nom_locate = { version = "4.2.0" }
+derive_more = "0.99.17"
 
 [profile.flamegraph]
 inherits = "release"

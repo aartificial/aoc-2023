@@ -1,13 +1,12 @@
 use crate::custom_error::AocError;
-use crate::Game;
-use itertools::Itertools;
+use crate::game::Game;
 
 #[tracing::instrument]
 pub fn process(input: &str) -> miette::Result<u32, AocError> {
     let result = input
         .lines()
         .map(|s| s.parse::<Game>().unwrap())
-        .map(|game| game.min_cubes().power())
+        .map(|game| game.minset().power())
         .sum();
 
     Ok(result)
