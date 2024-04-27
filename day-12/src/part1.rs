@@ -69,7 +69,7 @@ impl FromStr for Record {
 }
 
 pub(crate) fn possible_arrangements(springs: String, groups: Vec<usize>) -> usize {
-    let mut dp = vec![vec![0; groups.len()]; springs.len() + groups[groups.len() - 1] + 1];
+    let mut dp = init_dp(&springs, &groups);
     let mut min_j = 0;
     'main: for i in 0..springs.len() {
         if i > 0 {
@@ -95,6 +95,10 @@ pub(crate) fn possible_arrangements(springs: String, groups: Vec<usize>) -> usiz
         }
     }
     extract_result(&dp)
+}
+
+fn init_dp(springs: &str, groups: &[usize]) -> Vec<Vec<usize>> {
+    vec![vec![0; groups.len()]; springs.len() + groups[groups.len() - 1] + 1]
 }
 
 fn extract_result(dp: &[Vec<usize>]) -> usize {
