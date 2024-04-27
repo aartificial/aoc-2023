@@ -1,4 +1,5 @@
 use crate::number::Number;
+use itertools::Itertools;
 use nom::character::complete::{digit1, multispace1};
 use nom::multi::separated_list0;
 use nom::IResult;
@@ -27,20 +28,18 @@ pub fn extract_symbols(input: &str) -> Vec<(char, usize, usize)> {
 }
 
 pub fn parse_digits(input: &str) -> Result<Vec<Number>, String> {
-    let mut output = Vec::new();
     let regex = Regex::new(r"\d+").unwrap();
     let lines = input.lines().collect::<Vec<_>>();
 
-    for (line_index, line) in lines.iter().enumerate() {
-        for match_indices in regex.find_iter(line) {
-            match number_from_match(match_indices, line_index) {
-                Ok(num) => output.push(num),
-                Err(e) => return Err(e),
-            }
-        }
-    }
-
-    Ok(output)
+    lines
+        .iter()
+        .enumerate()
+        .flat_map(|(line_index, line)| {
+            regex
+                .find_iter(line)
+                .map(move |match_indices| number_from_match(match_indices, line_index))
+        })
+        .collect()
 }
 
 pub fn parsing_numbers(input: &str) -> IResult<&str, Vec<&str>> {

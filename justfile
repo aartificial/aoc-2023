@@ -6,4 +6,4 @@ testday day:
 create day:
     cargo generate --path ./daily-template --name {{day}}
 run day part:
-    cargo run --package {{day}} --bin {{part}}
+    cargo run --release --package {{day}} --bin {{part}}

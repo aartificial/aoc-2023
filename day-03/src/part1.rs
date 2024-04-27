@@ -1,6 +1,7 @@
 use crate::custom_error::AocError;
-use crate::{extract_symbols, parse_digits};
 use crate::number::Number;
+use crate::{extract_symbols, parse_digits};
+use itertools::Itertools;
 
 pub fn collect_adjacents(input: &str, symbols: Vec<(char, usize, usize)>) -> Vec<Number> {
     parse_digits(input)
@@ -12,7 +13,7 @@ pub fn collect_adjacents(input: &str, symbols: Vec<(char, usize, usize)>) -> Vec
                 .any(|(_, line, col)| number.is_adjacent(*line, *col))
         })
         .copied()
-        .collect::<Vec<_>>()
+        .collect_vec()
 }
 
 #[tracing::instrument]
