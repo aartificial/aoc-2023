@@ -1,5 +1,6 @@
 use derive_more::Into;
 use std::fmt::Debug;
+use std::ops::Range;
 use std::str::FromStr;
 
 use itertools::Itertools;
@@ -87,24 +88,33 @@ pub(crate) fn possible_arrangements(springs: String, groups: Vec<usize>) -> usiz
             if current == OPERATIONAL {
                 continue 'main;
             }
-            if !can_be_placed(&dp, i, j)
-                || !group_fits_in_spring(&springs, &groups, i, j)
-                || (is_last_group(&groups, j) && springs_remaining(&springs, &groups, i, j))
-                || !is_group_valid(&springs, &groups, i, j)
-            {
+            if is_valid(&springs, &groups, &dp, i, j) {
                 continue;
             }
-            let (next_start_idx, next_broken_idx) = next_indices(&springs, &groups, &dp, i, j);
-            for k in next_start_idx..=next_broken_idx {
-                if j > 0 {
-                    dp[k][j] += dp[i][j - 1];
-                } else {
-                    dp[k][j] += 1;
-                }
-            }
+            update_dp(&springs, &groups, &mut dp, i, j);
         }
     }
+    extract_result(&dp)
+}
+
+fn extract_result(dp: &[Vec<usize>]) -> usize {
     dp[dp.len() - 1][dp[dp.len() - 1].len() - 1]
+}
+
+fn update_dp(springs: &str, groups: &[usize], dp: &mut [Vec<usize>], i: usize, j: usize) {
+    for k in next_indices(springs, groups, dp, i, j) {
+        match j > 0 {
+            true => dp[k][j] += dp[i][j - 1],
+            false => dp[k][j] += 1,
+        }
+    }
+}
+
+fn is_valid(springs: &str, groups: &[usize], dp: &[Vec<usize>], i: usize, j: usize) -> bool {
+    !can_be_placed(dp, i, j)
+        || !group_fits_in_spring(springs, groups, i, j)
+        || (is_last_group(groups, j) && springs_remaining(springs, groups, i, j))
+        || !is_group_valid(springs, groups, i, j)
 }
 
 fn next_indices(
@@ -113,13 +123,16 @@ fn next_indices(
     dp: &[Vec<usize>],
     i: usize,
     j: usize,
-) -> (usize, usize) {
+) -> Range<usize> {
     let next_start_idx = springs.len().min(i + groups[j] + 1);
     let next_broken_idx = match springs[next_start_idx..].find(DAMAGED) {
         Some(n) => next_start_idx + n,
         None => dp.len() - 1,
     };
-    (next_start_idx, next_broken_idx)
+    Range {
+        start: next_start_idx,
+        end: next_broken_idx + 1,
+    }
 }
 
 fn is_group_valid(springs: &str, groups: &[usize], i: usize, j: usize) -> bool {
@@ -137,7 +150,7 @@ fn springs_remaining(springs: &str, groups: &[usize], i: usize, j: usize) -> boo
     springs[i + groups[j]..].chars().any(|c| c == DAMAGED_CHAR)
 }
 
-fn is_last_group(groups: &[usize], j: usize) -> bool {
+const fn is_last_group(groups: &[usize], j: usize) -> bool {
     j == groups.len() - 1
 }
 
