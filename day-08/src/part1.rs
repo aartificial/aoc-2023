@@ -63,11 +63,9 @@ pub fn process(input: &str) -> miette::Result<u64, AocError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tracing_subscriber::fmt;
 
     #[test]
     fn test_process() -> miette::Result<()> {
-        fmt::init();
         let input = "LLR
 
 AAA = (BBB, BBB)

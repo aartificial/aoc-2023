@@ -240,11 +240,9 @@ pub fn process(input: &str) -> miette::Result<i32, AocError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tracing_subscriber::fmt;
 
     #[test]
     fn test_process() -> miette::Result<()> {
-        fmt::init();
         let input = ".....
 .S-7.
 .|.|.

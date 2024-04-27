@@ -68,11 +68,9 @@ fn parse_maps(s: &str) -> Vec<Map> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tracing_subscriber::fmt;
 
     #[test]
     fn test_process() -> miette::Result<()> {
-        fmt::init();
         let input = "seeds: 79 14 55 13
 
 seed-to-soil map:

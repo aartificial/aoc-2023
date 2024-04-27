@@ -18,6 +18,15 @@ pub enum CardError {
 
 impl From<CardError> for AocError {
     fn from(err: CardError) -> Self {
-        AocError::from(err)
+        match err {
+            CardError::Number => AocError::IoError(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Invalid number",
+            )),
+            CardError::Parts => AocError::IoError(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Invalid parts",
+            )),
+        }
     }
 }

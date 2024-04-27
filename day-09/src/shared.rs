@@ -1,8 +1,8 @@
 use itertools::Itertools;
 
 pub struct Sequence<'a> {
-    pub(crate) numbers: &'a [i32],
-    pub(crate) diffs: Vec<Vec<i32>>,
+    pub numbers: &'a [i32],
+    pub diffs: Vec<Vec<i32>>,
 }
 
 impl Sequence<'_> {
@@ -33,7 +33,7 @@ impl Sequence<'_> {
             .map(|window| window[1] - window[0])
             .collect_vec()
     }
-    fn all_zero(s: &Vec<Vec<i32>>) -> bool {
+    fn all_zero(s: &[Vec<i32>]) -> bool {
         s.last().unwrap().iter().any(|&x| x != 0)
     }
 }

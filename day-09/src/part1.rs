@@ -12,13 +12,10 @@ pub fn process(input: &str) -> miette::Result<i32, AocError> {
 
 #[cfg(test)]
 mod tests {
-    use tracing_subscriber::fmt;
-
     use super::*;
 
     #[test]
     fn test_process() -> miette::Result<()> {
-        fmt::init();
         let input = "0 3 6 9 12 15
 1 3 6 10 15 21
 10 13 16 21 30 45";

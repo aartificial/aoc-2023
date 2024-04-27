@@ -75,11 +75,9 @@ pub fn process(input: &str) -> miette::Result<u64, AocError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tracing_subscriber::fmt;
 
     #[test]
     fn test_process() -> miette::Result<()> {
-        fmt::init();
         let input = "Time:      7  15   30
 Distance:  9  40  200";
         assert_eq!(288, process(input)?);

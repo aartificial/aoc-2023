@@ -34,7 +34,6 @@ L7JLJL-JLJLJL--JLJ.L";
 
     #[test]
     fn test_process2() -> miette::Result<()> {
-        fmt::init();
         let input = ".F----7F7F7F7F-7....
 .|F--7||||||||FJ....
 .||.FJ||||||||L7....
@@ -51,7 +50,6 @@ L--J.L7...LJS7F-7L7.
 
     #[test]
     fn test_process3() -> miette::Result<()> {
-        fmt::init();
         let input = "...........
 .S-------7.
 .|F-----7|.

@@ -1,5 +1,4 @@
 use crate::number::Number;
-use itertools::Itertools;
 use nom::character::complete::{digit1, multispace1};
 use nom::multi::separated_list0;
 use nom::IResult;
