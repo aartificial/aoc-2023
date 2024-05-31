@@ -25,6 +25,7 @@ criterion = { version = "0.5.1", features = ["html_reports"] }
 nom_locate = { version = "4.2.0" }
 derive_more = "0.99.17"
 regex = "1.10.4"
+proptest = "0.9.6"
 
 [profile.flamegraph]
 inherits = "release"
