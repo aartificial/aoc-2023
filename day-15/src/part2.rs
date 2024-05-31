@@ -1,17 +1,22 @@
 use crate::custom_error::AocError;
 use crate::part1::hash;
+use std::borrow::Cow;
 use std::collections::HashMap;
 
+#[tracing::instrument(skip(map))]
 fn focusing_power(map: &HashMap<usize, Box>) -> usize {
     map.iter()
-        .map(|(i, bx)| {
+        .flat_map(|(i, bx)| {
             bx.lenses
                 .iter()
                 .enumerate()
-                .map(|(slot, (_, focal_length))| (i + 1) * (slot + 1) * focal_length)
-                .sum::<usize>()
+                .map(|(s, (_, fl))| calculate_fp(*i, s, *fl))
         })
         .sum()
+}
+
+const fn calculate_fp(i: usize, s: usize, fl: usize) -> usize {
+    (i + 1) * (s + 1) * fl
 }
 
 #[tracing::instrument(skip(input))]
@@ -20,7 +25,6 @@ pub fn process(input: &str) -> miette::Result<usize, AocError> {
     for label in input.split(',') {
         apply_operation(&mut map, label);
     }
-
     Ok(focusing_power(&map))
 }
 
@@ -34,10 +38,12 @@ impl<'a> From<&'a str> for Label<'a> {
     fn from(input: &'a str) -> Self {
         let mut parts = input.split('=');
         let code = parts.next().unwrap().trim_end_matches('-');
+
         let operation = match parts.next() {
-            Some(value) => Operation::Equals(code, value.trim().parse().unwrap()),
-            None => Operation::Dash(code),
+            Some(value) => Operation::Equals(Cow::Borrowed(code), value.trim().parse().unwrap()),
+            None => Operation::Dash(Cow::Borrowed(code)),
         };
+
         Self {
             hash: hash(code),
             operation,
@@ -47,8 +53,8 @@ impl<'a> From<&'a str> for Label<'a> {
 
 #[derive(Debug)]
 enum Operation<'a> {
-    Dash(&'a str),
-    Equals(&'a str, usize),
+    Dash(Cow<'a, str>),
+    Equals(Cow<'a, str>, usize),
 }
 
 #[derive(Debug, PartialEq)]
@@ -89,12 +95,12 @@ fn apply_operation(map: &mut HashMap<usize, Box>, label: &str) {
     let label = Label::from(label);
     match label.operation {
         Operation::Equals(code, focal_length) => {
-            let bx = map.entry(label.hash).or_insert(Box::default());
-            bx.add(code, focal_length);
+            let bx = map.entry(label.hash).or_insert_with(Box::default);
+            bx.add(&code, focal_length);
         }
         Operation::Dash(code) => {
             if let Some(bx) = map.get_mut(&label.hash) {
-                bx.remove(code);
+                bx.remove(&code);
                 if bx.lenses.is_empty() {
                     map.remove(&label.hash);
                 }
@@ -135,7 +141,7 @@ mod tests {
 
         match label.operation {
             Operation::Equals(label, focal_length) => {
-                input.add(label, focal_length);
+                input.add(&label, focal_length);
             }
             _ => unreachable!(),
         }
@@ -154,7 +160,7 @@ mod tests {
         match label.operation {
             Operation::Dash(code) => {
                 println!("code: {}", code);
-                result.remove(code);
+                result.remove(&code);
             }
             _ => unreachable!(),
         }
