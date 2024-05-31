@@ -1,9 +1,5 @@
 use crate::custom_error::AocError;
 
-pub fn sequential_hash(input: &str) -> usize {
-    input.split(',').map(|s| s.trim()).map(hash).sum()
-}
-
 pub fn hash(input: &str) -> usize {
     let mut acc = 0;
     for byte in input.bytes() {
@@ -14,12 +10,12 @@ pub fn hash(input: &str) -> usize {
 
 #[tracing::instrument]
 pub fn process(input: &str) -> miette::Result<usize, AocError> {
-    Ok(sequential_hash(input))
+    Ok(input.split(',').map(|s| s.trim()).map(hash).sum())
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::part1::{hash, sequential_hash};
+    use crate::part1::hash;
     use rstest::rstest;
 
     #[rstest]
@@ -44,9 +40,9 @@ mod tests {
     }
 
     #[test]
-    fn sequential_hash_test() {
+    fn sum_hash_test() {
         let input = "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7";
-        let result = sequential_hash(input);
+        let result: usize = input.split(',').map(|s| s.trim()).map(hash).sum();
         assert_eq!(1320, result);
     }
 }
