@@ -3,6 +3,34 @@ use crate::part1::hash;
 use std::borrow::Cow;
 use std::collections::HashMap;
 
+#[tracing::instrument(skip(input))]
+pub fn process(input: &str) -> miette::Result<usize, AocError> {
+    let mut map: HashMap<usize, Box> = HashMap::new();
+    for label in input.split(',') {
+        apply_operation(&mut map, label);
+    }
+    Ok(focusing_power(&map))
+}
+
+#[tracing::instrument(skip(map, label))]
+fn apply_operation(map: &mut HashMap<usize, Box>, label: &str) {
+    let label = Label::from(label);
+    match label.operation {
+        Operation::Equals(code, focal_length) => {
+            let bx = map.entry(label.hash).or_insert_with(Box::default);
+            bx.add(&code, focal_length);
+        }
+        Operation::Dash(code) => {
+            if let Some(bx) = map.get_mut(&label.hash) {
+                bx.remove(&code);
+                if bx.lenses.is_empty() {
+                    map.remove(&label.hash);
+                }
+            }
+        }
+    }
+}
+
 #[tracing::instrument(skip(map))]
 fn focusing_power(map: &HashMap<usize, Box>) -> usize {
     map.iter()
@@ -17,15 +45,6 @@ fn focusing_power(map: &HashMap<usize, Box>) -> usize {
 
 const fn calculate_fp(i: usize, s: usize, fl: usize) -> usize {
     (i + 1) * (s + 1) * fl
-}
-
-#[tracing::instrument(skip(input))]
-pub fn process(input: &str) -> miette::Result<usize, AocError> {
-    let mut map: HashMap<usize, Box> = HashMap::new();
-    for label in input.split(',') {
-        apply_operation(&mut map, label);
-    }
-    Ok(focusing_power(&map))
 }
 
 #[derive(Debug)]
@@ -87,25 +106,6 @@ impl Box {
 
     fn default() -> Self {
         Self { lenses: Vec::new() }
-    }
-}
-
-#[tracing::instrument(skip(map, label))]
-fn apply_operation(map: &mut HashMap<usize, Box>, label: &str) {
-    let label = Label::from(label);
-    match label.operation {
-        Operation::Equals(code, focal_length) => {
-            let bx = map.entry(label.hash).or_insert_with(Box::default);
-            bx.add(&code, focal_length);
-        }
-        Operation::Dash(code) => {
-            if let Some(bx) = map.get_mut(&label.hash) {
-                bx.remove(&code);
-                if bx.lenses.is_empty() {
-                    map.remove(&label.hash);
-                }
-            }
-        }
     }
 }
 
