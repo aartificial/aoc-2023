@@ -26,6 +26,7 @@ nom_locate = { version = "4.2.0" }
 derive_more = "0.99.17"
 regex = "1.10.4"
 proptest = "1.4.0"
+pathfinding = "4.9.1"
 
 [profile.flamegraph]
 inherits = "release"
